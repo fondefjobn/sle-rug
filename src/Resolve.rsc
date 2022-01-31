@@ -6,7 +6,6 @@ import AST;
  * Name resolution for QL
  */ 
 
-
 // modeling declaring occurrences of names
 alias Def = rel[str name, loc def];
 
@@ -22,13 +21,14 @@ alias RefGraph = tuple[
   UseDef useDef
 ]; 
 
-RefGraph resolve(AForm f) = <us, ds, us o ds>
+RefGraph resolve(AForm f)
+  = <us, ds, us o ds>
   when Use us := uses(f), Def ds := defs(f);
 
-Use uses(AForm f) {
-  return {}; 
-}
+//Use refers to state
+Use uses(AForm f) 
+  = {<id.src, id.name> | /ref(AId id) := f}; 
 
-Def defs(AForm f) {
-  return {}; 
-}
+Def defs(AForm f)
+  = {<id.name, id.src> | /question(_, AId id, _) := f}
+  + {<id.name, id.src> | /assignQuestion(_, AId id, _, _) := f};

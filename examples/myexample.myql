@@ -1,0 +1,19 @@
+form binary {
+  "Is the number between 1 and 10" x_1_10: boolean
+  if (x_1_10) { 
+     "The answer is" answer_3_4: integer = (3)
+    "The answer is" answer_3_4: integer = (3)
+  }
+  else { 
+    
+    if (x_3_4) { 
+      "The answer is" answer_3_4: integer = (3)
+      "The answer is" answer_3_4: integer = (3)
+    }
+    "The answer is" answer_3_4: integer = (3)
+    "The answer is" answer_3_4: integer = (3)
+    "The answer is" answer_3_4: integer = (3)
+        
+  }
+}
+    

@@ -1,36 +1,67 @@
 module Syntax
 
 extend lang::std::Layout;
-extend lang::std::Id;
 
 /*
  * Concrete syntax of QL
  */
 
 start syntax Form 
-  = "form" Id "{" Question* "}"; 
+  = @Foldable "form" Ident Question; 
 
-// TODO: question, computed question, block, if-then-else, if-then
+// question, computed question, block, if-then-else, if-then
 syntax Question
-  = 
+  = @Foldable Str Ident ":" Type ("=" Expr)?
+  | @Foldable "{" Question* "}"
+  | @Foldable "if" "(" Expr ")" Question ("else" Question)?
   ; 
 
-// TODO: +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
+// +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
 // Think about disambiguation using priorities and associativity
 // and use C/Java style precedence rules (look it up on the internet)
 syntax Expr 
-  = Id \ "true" \ "false" // true/false are reserved keywords.
+  = Ident
+  | Bool
+  | Int
+  | Str
+  | bracket "(" Expr ")"
+  > "!" Expr
+  > left Expr "*" Expr
+  > left Expr "/" Expr
+  > left Expr "+" Expr
+  > left Expr "-" Expr
+  > left Expr "\<" Expr
+  > left Expr "\<=" Expr
+  > left Expr "\>" Expr
+  > left Expr "\>=" Expr
+  > left Expr "==" Expr
+  > left Expr "!=" Expr
+  > left Expr "&&" Expr
+  > left Expr "||" Expr
   ;
   
 syntax Type
-  = ;  
+  = "boolean"
+  | "integer"
+  | "string"
+  ;  
+ 
+lexical Str 
+  = "\"" ![\n\"]* "\""; 
+
+lexical Ident
+  = ([a-zA-Z][a-zA-Z0-9_]* !>> [a-zA-Z0-9_]) \ Reserved ;
   
-lexical Str = ;
-
 lexical Int 
-  = ;
+  = "0" !>> [0-9]
+  | [1-9][0-9]* !>> [0-9]
+  ;
 
-lexical Bool = ;
-
-
-
+lexical Bool
+  = "true"
+  | "false"
+  ;
+  
+keyword Reserved
+  = "if" | "else" | "true" | "false" | "boolean" | "integer" | "string" ;
+  
